@@ -1,13 +1,13 @@
 class preload extends Phaser.Scene{
     constructor(){
-        super("bootGame")
+        super("preload")
     }
 
     preload(){
         const loadingText = this.add.text(
             config.width / 2,
             config.height / 2,
-            "Loading..."
+            "Loading...",
             {fontSize: "24px", fill: "#ffffff"}
         ).setOrigin(.5);
 
