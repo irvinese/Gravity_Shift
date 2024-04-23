@@ -48,14 +48,14 @@ class CityScene extends Phaser.Scene{
         this.hazzard(this.box, -150);
         this.hazzard(this.lightpost, -200);
     }
-
+//hazard movement
     hazzard(hazzard, speed){
         hazzard.body.velocity.x = speed;
         if (hazzard.x <= 0) {
             this.resetHazzardPos(hazzard);
         }
     }
-
+ //Reser hazard position
     resetHazzardPos(hazzard){
         ship.x = config.width;
         var randomY = Phaser.Math.Between(0, config.height);
