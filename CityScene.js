@@ -1,12 +1,16 @@
 class CityScene extends Phaser.Scene{
     constructor(){
-        super("playGame")
+        super({ key: "playGame" });
+    }
+    init(config){
+        this.config = config;
     }
 
     gravity = 100
     flip = true
 
     create() {
+        let config = this.config;
         //Background
         this.background = this.add.tileSprite(0, 0, config.width, config.height, "StarCity").setOrigin(0, 0);
         this.physics.world.setBounds(0, 0, config.width, config.height, true, true, true, true);
@@ -23,8 +27,8 @@ class CityScene extends Phaser.Scene{
         this.player.play("Gravibot_anim");
 
         //Hazzards
-        this.box = this.add.sprite(config.width, config.height, "Box");
-        this.lightpost = this.add.sprite(config.width, 0, "LightPost");
+        this.box = this.physics.add.sprite(config.width, config.height, "Box");
+        this.lightpost = this.physics.add.sprite(config.width, 0, "LightPost");
 
         window.onkeydown = e => {
             if (e.keyCode === 32 && !this.isKeyDown){
@@ -43,7 +47,7 @@ class CityScene extends Phaser.Scene{
     }
 
     update(){
-        this.background.tilePositionY -= 0.5;
+        this.background.tilePositionX += 0.5;
 
         this.hazzard(this.box, -150);
         this.hazzard(this.lightpost, -200);
@@ -57,8 +61,8 @@ class CityScene extends Phaser.Scene{
     }
  //Reser hazard position
     resetHazzardPos(hazzard){
-        ship.x = config.width;
-        var randomY = Phaser.Math.Between(0, config.height);
-        ship.y = randomY;
+        hazzard.x = this.config.width;
+        var randomY = Phaser.Math.Between(0, this.config.height);
+        hazzard.y = randomY;
     }
 }

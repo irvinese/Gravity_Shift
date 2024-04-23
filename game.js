@@ -16,4 +16,5 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     var game = new Phaser.Game(config);
+
 });
