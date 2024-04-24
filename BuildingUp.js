@@ -88,7 +88,7 @@ class BuildingUp extends Phaser.Scene{
         // Quick Descent Action
         if (this.cursors.down.isDown && !this.player.body.touching.right) 
         {
-            this.player.setVelocityY(300); // Downward velocity for quick descent
+            this.player.setVelocityX(400); // Downward velocity for quick descent
         }
        }
        spawnHazard() {

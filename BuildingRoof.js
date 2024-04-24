@@ -22,6 +22,11 @@ class BuildingRoof extends Phaser.Scene{
         this.topBarrier.setSize(config.width, 1); // Set the size to cover the entire width of the scene
         this.topBarrier.setVisible(false);
 
+        // Left barrier
+     this.leftBarrier = this.physics.add.staticSprite(0, config.height / 2, "leftBarrier");
+     this.leftBarrier.setSize(1, config.height); // Set the size to cover the entire height of the scene
+     this.leftBarrier.setVisible(false);
+
         //Player
         this.player = this.physics.add.sprite(50, config.height - 50, "Gravibot");
         this.player.setScale(.6);
@@ -89,25 +94,41 @@ class BuildingRoof extends Phaser.Scene{
     spawnHazard() {
         // Randomly select hazard type
         const hazardType = Phaser.Math.Between(0, 1);
-        
-        // Spawn hazard at random position along the right side of the screen
-        const hazardX = config.width; // Spawn at the right side of the screen
-        const hazardY = Phaser.Math.Between(0, config.height);
-
+    
+        // Spawn hazard off-screen to the right
+        const hazardX = config.width + 50; // Off the screen on the right side
+        const topHazardY = 50; // Specific Y position at the top of the scene
+        const bottomHazardY = config.height - 50; // Specific Y position at the bottom of the scene
+    
+        let hazardY;
+    
+        // Randomly select between top and bottom positions for hazard Y
+        if (Phaser.Math.Between(0, 1) === 0) {
+            hazardY = topHazardY;
+        } else {
+            hazardY = bottomHazardY;
+        }
+    
         let hazard;
-
+    
         if (hazardType === 0) {
+            // Spawn hazard (e.g., Box) off-screen to the right
             hazard = this.physics.add.sprite(hazardX, hazardY, "Box");
         } else {
+            // Spawn hazard (e.g., LightPost) off-screen to the right
             hazard = this.physics.add.sprite(hazardX, hazardY, "LightPost");
         }
-
-        // Set leftward velocity for the hazard
-        hazard.setVelocity(-650, 0); // Adjust speed as needed
-
+    
+        // Disable gravity for the hazard
+        hazard.body.allowGravity = false;
+    
+        // Set velocity for the hazard to move towards the left (adjust speed as needed)
+        hazard.setVelocity(-200, 0);
+    
         // Collider between hazard and bottom barrier (unchanged)
         this.physics.add.collider(hazard, this.bottomBarrier, () => {
             hazard.destroy(); // Remove hazard when it collides with bottom barrier
         });
     }
+    
 }

@@ -100,7 +100,7 @@ class BuildingDown extends Phaser.Scene{
         }
          // Quick Descent Action
          if (this.cursors.down.isDown && !this.player.body.touching.left) {
-            this.player.setVelocityY(-300);
+            this.player.setVelocityX(-400);
         }
     }
     spawnHazard() {
