@@ -61,35 +61,28 @@ class CityScene extends Phaser.Scene{
                 this.isKeyDown = true;
             }
         };
+
+        //timer for 15 seconds to change scene
+        this.time.delayedCall(15000, () => {
+            this.scene.start("JumpOnBuildingAnimation");
+        }, null, this)
+        
     }
     update(){
-        console.log("update");
-        if (this.cursors.left.isDown) {
-            this.movePlayer(-150); // Move left
-        } else if (this.cursors.right.isDown) {
-            this.movePlayer(250); // Move right
-        }
-        // Check if player reaches the end
-        if (this.player.x >= config.width) {
-            // Stop the player movement
-            this.player.setVelocityX(0);
+        //code that moves background
+        this.background.tilePositionX += 1;
 
-            // Transition to the next scene
-            this.scene.start("BuildingUp");
-        }
+
         this.hazzard(this.box, -150);
         this.hazzard(this.lightpost, -200);
 
         //Jump Action
-
-    if (this.cursors.up.isDown  && this.player.body.touching.down)
-    {
-        this.player.setVelocityY(-330);
-    }
-    }
-    movePlayer(velocityX) {
-        this.player.setVelocityX(velocityX);
-    }
+         if (this.cursors.up.isDown  && this.player.body.touching.down)
+        {
+            this.player.setVelocityY(-330);
+        }
+       }
+   
 //hazard movement
     hazzard(hazzard, speed){
         hazzard.body.velocity.x = speed;

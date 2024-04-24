@@ -2,7 +2,7 @@
     var config = {
         width: 1000,
         height: 200,
-        scene: [preload, CityScene, BuildingUp, BuildingRoof, BuildingDown],
+        scene: [preload, CityScene, Jump_On_Building_Player, BuildingUp, BuildingRoof, BuildingDown],
         pixelArt: true,
         physics: {
             default: "arcade",
