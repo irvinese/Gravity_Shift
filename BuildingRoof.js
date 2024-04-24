@@ -42,10 +42,15 @@ class BuildingRoof extends Phaser.Scene{
         //Collision between player and barrier
         this.physics.add.collider(this.player, this.bottomBarrier);
         this.physics.add.collider(this.player, this.topBarrier);
- 
-        //Hazzards
+
         this.box = this.physics.add.sprite(config.width, config.height, "Box");
-        this.lightpost = this.physics.add.sprite(config.width, 0, "LightPost");
+        this.drone = this.physics.add.sprite(config.width, config.height, "Drone");
+        this.antenna = this.physics.add.sprite(config.width, config.height, "Antenna");
+
+        // Registering collision callbacks
+        this.physics.add.overlap(this.player, this.box, this.playerHitHazard, null, this);
+        this.physics.add.overlap(this.player, this.drone, this.playerHitHazard, null, this);
+        this.physics.add.overlap(this.player, this.antenna, this.playerHitHazard, null, this);
 
         //keyboard input
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -93,7 +98,8 @@ class BuildingRoof extends Phaser.Scene{
     }
     spawnHazard() {
         // Randomly select hazard type
-        const hazardType = Phaser.Math.Between(0, 1);
+        const bottomHazardType = Phaser.Math.Between(0, 1); // Box or Antenna
+        const topHazardType = 0; // Drone
     
         // Spawn hazard off-screen to the right
         const hazardX = config.width + 50; // Off the screen on the right side
@@ -101,22 +107,19 @@ class BuildingRoof extends Phaser.Scene{
         const bottomHazardY = config.height - 50; // Specific Y position at the bottom of the scene
     
         let hazardY;
-    
+        let hazard;
+        
         // Randomly select between top and bottom positions for hazard Y
         if (Phaser.Math.Between(0, 1) === 0) {
             hazardY = topHazardY;
+            hazard = this.physics.add.sprite(hazardX, hazardY, "Drone"); // Spawn Drone at the top
         } else {
             hazardY = bottomHazardY;
-        }
-    
-        let hazard;
-    
-        if (hazardType === 0) {
-            // Spawn hazard (e.g., Box) off-screen to the right
-            hazard = this.physics.add.sprite(hazardX, hazardY, "Box");
-        } else {
-            // Spawn hazard (e.g., LightPost) off-screen to the right
-            hazard = this.physics.add.sprite(hazardX, hazardY, "LightPost");
+            if (bottomHazardType === 0) {
+                hazard = this.physics.add.sprite(hazardX, hazardY, "Box"); // Spawn Box at the bottom
+            } else {
+                hazard = this.physics.add.sprite(hazardX, hazardY, "Antenna"); // Spawn Antenna at the bottom
+            }
         }
     
         // Disable gravity for the hazard
@@ -131,4 +134,7 @@ class BuildingRoof extends Phaser.Scene{
         });
     }
     
+    playerHitHazard(_player, hazard) {
+        hazard.destroy();
+    }
 }
