@@ -18,7 +18,7 @@ class preload extends Phaser.Scene{
         this.load.image("BuildingDown", "Assets/Backgrounds/GravityShift_BuildingDown.png");
         this.load.image("Box", "Assets/Hazzards/CityHazzard_Box.png");
         this.load.image("LightPost", "Assets/Hazzards/CityHazzard_LightPost.png");
-        this.load.spritesheet("Gravibot", "assets/Player/Gravibot_SpriteSheet.png", {
+        this.load.spritesheet("Gravibot", "Assets/Player/Gravibot_SpriteSheet_RemoveBackground.png", {
             frameWidth: 100,
             frameHeight: 100
         });
