@@ -18,6 +18,7 @@ class CityScene extends Phaser.Scene{
 
         //Player
         this.player = this.physics.add.sprite(50, config.height - 50, "Gravibot");
+        this.player.setScale(.7);
         this.anims.create({
             key: "Gravibot_anim",
             frames: this.anims.generateFrameNumbers("Gravibot"),
