@@ -7,6 +7,7 @@ class CityScene extends Phaser.Scene{
     flip = true
 
     create() {
+        updateGameDimensions(1000, 200);
         //Background
         this.background = this.add.tileSprite(0, 0, config.width, config.height, "StarCity").setOrigin(0, 0);
         this.physics.world.setBounds(0, 0, config.width, config.height, true, true, true, true);
@@ -64,7 +65,7 @@ class CityScene extends Phaser.Scene{
 
         //timer for 15 seconds to change scene
         this.time.delayedCall(15000, () => {
-            this.scene.start("JumpOnBuildingAnimation");
+            this.scene.start("BuildingUp");
         }, null, this)
         
     }
