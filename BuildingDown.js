@@ -1,6 +1,6 @@
-class CityScene extends Phaser.Scene{
+class BuildingDown extends Phaser.Scene{
     constructor(){
-        super("playGame");
+        super("BuildingDown");
     }
 
     gravity = 100
@@ -8,7 +8,7 @@ class CityScene extends Phaser.Scene{
 
     create() {
         //Background
-        this.background = this.add.tileSprite(0, 0, config.width, config.height, "StarCity").setOrigin(0, 0);
+        this.background = this.add.tileSprite(0, 0, config.width, config.height, "BuildingDown").setOrigin(0, 0);
         this.physics.world.setBounds(0, 0, config.width, config.height, true, true, true, true);
 
         //Barrier for bottom of background
@@ -29,15 +29,13 @@ class CityScene extends Phaser.Scene{
 
         //Collision between player and barrier
         this.physics.add.collider(this.player, this.bottomBarrier);
-
+ 
         //Hazzards
-        this.box = this.add.sprite(config.width, config.height, "Box");
-        this.lightpost = this.add.sprite(config.width, 0, "LightPost");
+        this.box = this.physics.add.sprite(config.width, config.height, "Box");
+        this.lightpost = this.physics.add.sprite(config.width, 0, "LightPost");
 
         //keyboard input
         this.cursors = this.input.keyboard.createCursorKeys();
-        this.box = this.physics.add.sprite(config.width, config.height, "Box");
-        this.lightpost = this.physics.add.sprite(config.width, 0, "LightPost");
 
         window.onkeydown = e => {
             if (e.keyCode === 32 && !this.isKeyDown){
@@ -66,7 +64,7 @@ class CityScene extends Phaser.Scene{
             this.player.setVelocityX(0);
 
             // Transition to the next scene
-            this.scene.start("BuildingUp");
+            this.scene.start("playGame");
         }
         this.hazzard(this.box, -150);
         this.hazzard(this.lightpost, -200);

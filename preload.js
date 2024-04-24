@@ -13,6 +13,9 @@ class preload extends Phaser.Scene{
         ).setOrigin(.5);
 
         this.load.image("StarCity", "assets/Backgrounds/GravityShift_CityBackground_Stars.png");
+        this.load.image("BuildingUp", "Assets/Backgrounds/GravityShift_BuildingUp_Stars.png");
+        this.load.image("BuildingRoof", "Assets/Backgrounds/GravityShift_BuildingRoof_Stars.png");
+        this.load.image("BuildingDown", "Assets/Backgrounds/GravityShift_BuildingDown.png");
         this.load.image("Box", "Assets/Hazzards/CityHazzard_Box.png");
         this.load.image("LightPost", "Assets/Hazzards/CityHazzard_LightPost.png");
         this.load.spritesheet("Gravibot", "assets/Player/Gravibot_SpriteSheet.png", {
