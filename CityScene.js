@@ -1,22 +1,18 @@
 class CityScene extends Phaser.Scene{
     constructor(){
-        super({ key: "playGame" });
-    }
-    init(config){
-        this.config = config;
+        super("playGame");
     }
 
     gravity = 100
     flip = true
 
     create() {
-        let config = this.config;
         //Background
         this.background = this.add.tileSprite(0, 0, config.width, config.height, "StarCity").setOrigin(0, 0);
         this.physics.world.setBounds(0, 0, config.width, config.height, true, true, true, true);
 
         //Player
-        this.player = this.add.sprite(150, config.height/2, "Gravibot");
+        this.player = this.add.sprite(50, config.height - 50, "Gravibot");
         this.anims.create({
             key: "Gravibot_anim",
             frames: this.anims.generateFrameNumbers("Gravibot"),
@@ -25,7 +21,7 @@ class CityScene extends Phaser.Scene{
         });
 
         this.player.play("Gravibot_anim");
-
+ 
         //Hazzards
         this.box = this.physics.add.sprite(config.width, config.height, "Box");
         this.lightpost = this.physics.add.sprite(config.width, 0, "LightPost");

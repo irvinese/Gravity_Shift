@@ -12,10 +12,10 @@ class preload extends Phaser.Scene{
             {fontSize: "24px", fill: "#ffffff"}
         ).setOrigin(.5);
 
-        this.load.image("StarCity", "Assets/Backgrounds/GravityShift_CityBackground_Stars.png");
+        this.load.image("StarCity", "assets/Backgrounds/GravityShift_CityBackground_Stars.png");
         this.load.image("Box", "Assets/Hazzards/CityHazzard_Box.png");
-        this.load.image("LightPsot", "Assets/Hazzards/CityHazzard_LightPost.png");
-        this.load.spritesheet("Gravibot", "Assets/Player/Gravibot_SpriteSheet.png", {
+        this.load.image("LightPost", "Assets/Hazzards/CityHazzard_LightPost.png");
+        this.load.spritesheet("Gravibot", "assets/Player/Gravibot_SpriteSheet.png", {
             frameWidth: 100,
             frameHeight: 100
         });

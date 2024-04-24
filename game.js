@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+
     var config = {
         width: 1000,
         height: 200,
@@ -16,5 +16,3 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     var game = new Phaser.Game(config);
-
-});
