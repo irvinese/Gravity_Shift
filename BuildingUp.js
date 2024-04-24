@@ -36,7 +36,7 @@ class BuildingUp extends Phaser.Scene{
 
         //Player
         this.player = this.physics.add.sprite(50, config.height - 50, "Gravibot");
-        this.player.setScale(.7);
+        this.player.setScale(.6);
         this.player.setRotation(-Math.PI / 2);
         this.anims.create({
             key: "Gravibot_anim",
@@ -60,20 +60,6 @@ class BuildingUp extends Phaser.Scene{
         //keyboard input
         this.cursors = this.input.keyboard.createCursorKeys();
 
-        window.onkeydown = e => {
-            if (e.keyCode === 32 && !this.isKeyDown){
-                this.gravity *= -1
-                this.player.setGravityY(this.gravity);
-                if (this.flip){
-                    this.flip = false;
-                } 
-                else {
-                    this.flip = true;
-                }
-                this.player.flipY = this.flip;
-                this.isKeyDown = true;
-            }
-        };
 
         //timer for 15 seconds to change scene
         this.time.delayedCall(15000, () => {
@@ -82,34 +68,52 @@ class BuildingUp extends Phaser.Scene{
 
         //sets the gravity to the right
         this.physics.world.gravity.x = 100;
+
+        this.spawnHazardTimer = this.time.addEvent({
+            delay: 1500, // Adjust as needed
+            loop: true,
+            callback: this.spawnHazard,
+            callbackScope: this
+        });
     }
     update(){
         //code that moves background
         this.background.tilePositionY -= 1;
 
-
-        this.hazzard(this.box, -150);
-        this.hazzard(this.lightpost, -200);
-
         //Jump Action
          if (this.cursors.up.isDown  && this.player.body.touching.right)
         {
-            this.player.setVelocityX(-330);
+            this.player.setVelocityX(-400);
+        }
+        // Quick Descent Action
+        if (this.cursors.down.isDown && !this.player.body.touching.right) 
+        {
+            this.player.setVelocityY(300); // Downward velocity for quick descent
         }
        }
-    
-    
-//hazard movement
-    hazzard(hazzard, speed){
-        hazzard.body.velocity.x = speed;
-        if (hazzard.x <= 0) {
-            this.resetHazzardPos(hazzard);
+       spawnHazard() {
+        // Randomly select hazard type
+        const hazardType = Phaser.Math.Between(0, 1);
+        
+        // Spawn hazard at random position along the top of the screen
+        const hazardX = Phaser.Math.Between(0, config.width);
+        const hazardY = 0; // Spawn at the top of the screen
+
+        let hazard;
+
+        if (hazardType === 0) {
+            hazard = this.physics.add.sprite(hazardX, hazardY, "Box");
+        } else {
+            hazard = this.physics.add.sprite(hazardX, hazardY, "LightPost");
         }
+
+        // Set downward velocity for the hazard
+        hazard.setVelocity(-10, 500); // Adjust speed as needed
+
+        // Collider between hazard and bottom barrier (unchanged)
+        this.physics.add.collider(hazard, this.bottomBarrier, () => {
+            hazard.destroy(); // Remove hazard when it collides with bottom barrier
+        });
     }
- //Reser hazard position
-    resetHazzardPos(hazzard){
-        hazzard.x = config.width;
-        var randomY = Phaser.Math.Between(0, config.height);
-        hazzard.y = randomY;
-    }
+    
 }

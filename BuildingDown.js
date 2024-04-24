@@ -34,7 +34,7 @@ class BuildingDown extends Phaser.Scene{
 
         //Player
         this.player = this.physics.add.sprite(50, 50, "Gravibot");
-        this.player.setScale(.7);
+        this.player.setScale(.6);
         this.player.setRotation(Math.PI / 2);
         this.anims.create({
             key: "Gravibot_anim",
@@ -81,33 +81,50 @@ class BuildingDown extends Phaser.Scene{
         //sets the gravity to the left
         this.physics.world.gravity.y = -100; // Vertical gravity
         this.physics.world.gravity.x = -100; // Horizontal gravity
+
+        this.spawnHazardTimer = this.time.addEvent({
+            delay: 1000, // Adjust as needed
+            loop: true,
+            callback: this.spawnHazard,
+            callbackScope: this
+        });
     }
     update(){
         //code that moves background
         this.background.tilePositionY += 1;
 
-
-        this.hazzard(this.box, -150);
-        this.hazzard(this.lightpost, -200);
-
         //Jump Action
          if (this.cursors.up.isDown  && this.player.body.touching.left)
         {
-            this.player.setVelocityX(330);
+            this.player.setVelocityX(400);
+        }
+         // Quick Descent Action
+         if (this.cursors.down.isDown && !this.player.body.touching.left) {
+            this.player.setVelocityY(-300);
         }
     }
-    
-//hazard movement
-    hazzard(hazzard, speed){
-        hazzard.body.velocity.x = speed;
-        if (hazzard.x <= 0) {
-            this.resetHazzardPos(hazzard);
+    spawnHazard() {
+        //Randomly select hazard type
+        const hazardType = Phaser.Math.Between(0, 1);
+        
+        // Spawn hazard at random position along the bottom of the screen
+        const hazardX = Phaser.Math.Between(0, config.width);
+        const hazardY = config.height; // Spawn at the bottom of the screen
+
+        let hazard;
+
+        if (hazardType === 0) {
+            hazard = this.physics.add.sprite(hazardX, hazardY, "Box");
+        } else {
+            hazard = this.physics.add.sprite(hazardX, hazardY, "LightPost");
         }
-    }
- //Reser hazard position
-    resetHazzardPos(hazzard){
-        hazzard.x = config.width;
-        var randomY = Phaser.Math.Between(0, config.height);
-        hazzard.y = randomY;
+
+        // Set upward velocity for the hazard
+        hazard.setVelocity(20, -500); // Adjust speed as needed
+
+        // Collider between hazard and top barrier (unchanged)
+        this.physics.add.collider(hazard, this.topBarrier, () => {
+            hazard.destroy(); // Remove hazard when it collides with top barrier
+        });
     }
 }
