@@ -16,6 +16,12 @@ class CityScene extends Phaser.Scene{
         this.bottomBarrier.setSize(config.width, 1); // Set the size to cover the entire width of the scene
         this.bottomBarrier.setVisible(false);
 
+        //barrier for the top of the screen
+        this.topBarrier = this.physics.add.staticSprite(config.width / 2, 0, "topBarrier");
+        this.topBarrier.setSize(config.width, 1); // Set the size to cover the entire width of the scene
+        this.topBarrier.setVisible(false);
+        
+
         //Player
         this.player = this.physics.add.sprite(50, config.height - 50, "Gravibot");
         this.player.setScale(.7);
@@ -30,6 +36,7 @@ class CityScene extends Phaser.Scene{
 
         //Collision between player and barrier
         this.physics.add.collider(this.player, this.bottomBarrier);
+        this.physics.add.collider(this.player, this.topBarrier);
 
         //Hazzards
         this.box = this.add.sprite(config.width, config.height, "Box");
@@ -56,6 +63,7 @@ class CityScene extends Phaser.Scene{
         };
     }
     update(){
+        console.log("update");
         if (this.cursors.left.isDown) {
             this.movePlayer(-150); // Move left
         } else if (this.cursors.right.isDown) {
@@ -71,6 +79,13 @@ class CityScene extends Phaser.Scene{
         }
         this.hazzard(this.box, -150);
         this.hazzard(this.lightpost, -200);
+
+        //Jump Action
+
+    if (this.cursors.up.isDown  && this.player.body.touching.down)
+    {
+        this.player.setVelocityY(-330);
+    }
     }
     movePlayer(velocityX) {
         this.player.setVelocityX(velocityX);
