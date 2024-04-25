@@ -34,7 +34,7 @@ class preload extends Phaser.Scene{
 
         this.load.on("complete", () => {
             // Load next scene
-            this.scene.start("BuildingUp");
+            this.scene.start("playGame");
         });
 
         this.load.on("fileloaderror", (key, file) => {

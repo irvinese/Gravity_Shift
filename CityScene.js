@@ -94,23 +94,36 @@ class CityScene extends Phaser.Scene{
        }
        spawnHazard() {
         // Randomly select hazard type
-        const hazardType = Phaser.Math.Between(0, 1);
-        
-        // Spawn hazard at random position along the right side of the screen
-        const hazardX = config.width; // Spawn at the right side of the screen
-        const hazardY = Phaser.Math.Between(0, config.height);
-
+        const bottomHazardType = Phaser.Math.Between(0, 1); // Box or Antenna
+        const topHazardType = 0; // Drone
+    
+        // Spawn hazard off-screen to the right
+        const hazardX = config.width + 50; // Off the screen on the right side
+        const topHazardY = 50; // Specific Y position at the top of the scene
+        const bottomHazardY = config.height - 50; // Specific Y position at the bottom of the scene
+    
+        let hazardY;
         let hazard;
-
-        if (hazardType === 0) {
-            hazard = this.physics.add.sprite(hazardX, hazardY, "Box");
+        
+        // Randomly select between top and bottom positions for hazard Y
+        if (Phaser.Math.Between(0, 1) === 0) {
+            hazardY = topHazardY;
+            hazard = this.physics.add.sprite(hazardX, hazardY, "Drone"); // Spawn Drone at the top
         } else {
-            hazard = this.physics.add.sprite(hazardX, hazardY, "LightPost");
+            hazardY = bottomHazardY;
+            if (bottomHazardType === 0) {
+                hazard = this.physics.add.sprite(hazardX, hazardY, "Box"); // Spawn Box at the bottom
+            } else {
+                hazard = this.physics.add.sprite(hazardX, hazardY, "LightPost"); // Spawn Antenna at the bottom
+            }
         }
-
-        // Set leftward velocity for the hazard
-        hazard.setVelocity(-650, 0); // Adjust speed as needed
-
+    
+        // Disable gravity for the hazard
+        hazard.body.allowGravity = false;
+    
+        // Set velocity for the hazard to move towards the left (adjust speed as needed)
+        hazard.setVelocity(-200, 0);
+    
         // Collider between hazard and bottom barrier (unchanged)
         this.physics.add.collider(hazard, this.bottomBarrier, () => {
             hazard.destroy(); // Remove hazard when it collides with bottom barrier

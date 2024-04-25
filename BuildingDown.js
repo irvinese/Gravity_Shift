@@ -52,8 +52,9 @@ class BuildingDown extends Phaser.Scene{
         this.physics.add.collider(this.player, this.rightBarrier);
  
         //Hazzards
-        this.box = this.physics.add.sprite(config.width, config.height, "Box");
-        this.lightpost = this.physics.add.sprite(config.width, 0, "LightPost");
+        this.drone = this.physics.add.sprite(config.width, config.height, "Drone");
+        this.evil = this.physics.add.sprite(config.width, config.height, "Evil");
+        this.Suction = this.physics.add.sprite(config.width, config.height, "Suctioncup_Man")
 
         //keyboard input
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -83,7 +84,7 @@ class BuildingDown extends Phaser.Scene{
         this.physics.world.gravity.x = -100; // Horizontal gravity
 
         this.spawnHazardTimer = this.time.addEvent({
-            delay: 1000, // Adjust as needed
+            delay: 1500, // Adjust as needed
             loop: true,
             callback: this.spawnHazard,
             callbackScope: this
@@ -106,13 +107,13 @@ class BuildingDown extends Phaser.Scene{
     spawnHazard() {
         // Randomly select hazard type
         const bottomHazardType = Phaser.Math.Between(0, 1); // Box or Antenna
-        const topHazardType = 0; // Drone
+        const topHazardType = Phaser.Math.Between(0, 1); // Evil or Suctioncup_Man
     
         // Spawn hazard off-screen to the right
         const topHazardX = config.width - 150;
         const bottomHazardX = config.width - 50; // Right edge of the scene
-        const topHazardY = 50; // Specific Y position at the top of the scene
-        const bottomHazardY = 0; // Specific Y position at the bottom of the scene
+        const topHazardY = config.height - 50; // Specific Y position at the bottom of the scene
+        const bottomHazardY = config.height; // Specific Y position at the bottom of the scene
     
         let hazardY;
         let hazard;
@@ -120,28 +121,32 @@ class BuildingDown extends Phaser.Scene{
         // Randomly select between top and bottom positions for hazard Y
         if (Phaser.Math.Between(0, 1) === 0) {
             hazardY = topHazardY;
-            hazard = this.physics.add.sprite(topHazardX, hazardY, "Drone"); // Spawn Drone at the top
-        } else {
-            hazardY = bottomHazardY;
-            if (bottomHazardType === 0) {
-                hazard = this.physics.add.sprite(bottomHazardX, hazardY, "Evil"); // Spawn Box at the bottom
-                hazard.setRotation(-Math.PI / 2);
+            if (topHazardType === 0) {
+                hazard = this.physics.add.sprite(topHazardX, hazardY, "Evil"); // Spawn Evil at the top
+                hazard.setRotation(Math.PI / 2);
                 hazard.setFlipX(true);
             } else {
-                hazard = this.physics.add.sprite(bottomHazardX, hazardY, "Suctioncup_Man"); // Spawn Antenna at the bottom
+                hazard = this.physics.add.sprite(topHazardX, hazardY, "Suctioncup_Man"); // Spawn Suctioncup_Man at the top
                 hazard.setScale(.25);
+                hazard.setFlipX(true);
             }
+        } else {
+            hazardY = bottomHazardY;
+            hazard = this.physics.add.sprite(bottomHazardX, hazardY, "Drone"); // Spawn Drone at the bottom
         }
     
         // Disable gravity for the hazard
         hazard.body.allowGravity = false;
     
-        // Set velocity for the hazard to move towards the left (adjust speed as needed)
+        // Set velocity for the hazard to move upwards (adjust speed as needed)
         hazard.setVelocity(0, -200);
     
-        // Collider between hazard and bottom barrier (unchanged)
-        this.physics.add.collider(hazard, this.bottomBarrier, () => {
-            hazard.destroy(); // Remove hazard when it collides with bottom barrier
+        // Collider between hazard and top barrier
+        this.physics.add.collider(hazard, this.topBarrier, () => {
+            hazard.destroy(); // Remove hazard when it collides with top barrier
         });
     }
+    
+    
+    
 }
