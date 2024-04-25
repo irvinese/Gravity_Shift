@@ -140,7 +140,7 @@ getUserLocation(){
             this.gameOver(); // Game over when player collides with hazzard
         });
     }
-
+    
     gameOver() {
         this.scene.start("GameOver");
     }
