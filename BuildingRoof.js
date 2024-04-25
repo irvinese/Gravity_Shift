@@ -43,15 +43,6 @@ class BuildingRoof extends Phaser.Scene{
         this.physics.add.collider(this.player, this.bottomBarrier);
         this.physics.add.collider(this.player, this.topBarrier);
 
-        this.box = this.physics.add.sprite(config.width, config.height, "Box");
-        this.drone = this.physics.add.sprite(config.width, config.height, "Drone");
-        this.antenna = this.physics.add.sprite(config.width, config.height, "Antenna");
-
-        // Registering collision callbacks
-        this.physics.add.overlap(this.player, this.box, this.playerHitHazard, null, this);
-        this.physics.add.overlap(this.player, this.drone, this.playerHitHazard, null, this);
-        this.physics.add.overlap(this.player, this.antenna, this.playerHitHazard, null, this);
-
         //keyboard input
         this.cursors = this.input.keyboard.createCursorKeys();
 
@@ -113,12 +104,15 @@ class BuildingRoof extends Phaser.Scene{
         if (Phaser.Math.Between(0, 1) === 0) {
             hazardY = topHazardY;
             hazard = this.physics.add.sprite(hazardX, hazardY, "Drone"); // Spawn Drone at the top
+            hazard.body.setSize(hazard.width * 0.7, hazard.height * 0.7);
         } else {
             hazardY = bottomHazardY;
             if (bottomHazardType === 0) {
                 hazard = this.physics.add.sprite(hazardX, hazardY, "Box"); // Spawn Box at the bottom
+                hazard.body.setSize(hazard.width * 0.7, hazard.height * 0.7);
             } else {
                 hazard = this.physics.add.sprite(hazardX, hazardY, "Antenna"); // Spawn Antenna at the bottom
+                hazard.body.setSize(hazard.width * 0.7, hazard.height * 0.7);
             }
         }
     

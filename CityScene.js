@@ -36,6 +36,11 @@ class CityScene extends Phaser.Scene{
         this.physics.add.collider(this.player, this.bottomBarrier);
         this.physics.add.collider(this.player, this.topBarrier);
 
+        //Hazzards
+        this.box = this.add.sprite(config.width, config.height, "Box");
+        this.lightpost = this.add.sprite(config.width, 0, "LightPost");
+
+
         //keyboard input
         this.cursors = this.input.keyboard.createCursorKeys();
         this.box = this.physics.add.sprite(config.width, config.height, "Box");
@@ -73,26 +78,42 @@ class CityScene extends Phaser.Scene{
 
     spawnHazard() {
         // Randomly select hazard type
-        const hazardType = Phaser.Math.Between(0, 1);
-        
-        // Spawn hazard at random position along the right side of the screen
-        const hazardX = config.width; // Spawn at the right side of the screen
-        const hazardY = Phaser.Math.Between(0, config.height);
-
+        const bottomHazardType = Phaser.Math.Between(0, 1); // Box or Antenna
+        const topHazardType = 0; // Drone
+    
+        // Spawn hazard off-screen to the right
+        const hazardX = config.width + 50; // Off the screen on the right side
+        const topHazardY = 50; // Specific Y position at the top of the scene
+        const bottomHazardY = config.height - 50; // Specific Y position at the bottom of the scene
+    
+        let hazardY;
         let hazard;
-
-        if (hazardType === 0) {
-            hazard = this.physics.add.sprite(hazardX, hazardY, "Box");
+        
+        // Randomly select between top and bottom positions for hazard Y
+        if (Phaser.Math.Between(0, 1) === 0) {
+            hazardY = topHazardY;
+            hazard = this.physics.add.sprite(hazardX, hazardY, "Drone"); // Spawn Drone at the top
+            hazard.body.setSize(hazard.width * 0.7, hazard.height * 0.7);
         } else {
-            hazard = this.physics.add.sprite(hazardX, hazardY, "LightPost");
+            hazardY = bottomHazardY;
+            if (bottomHazardType === 0) {
+                hazard = this.physics.add.sprite(hazardX, hazardY, "Box"); // Spawn Box at the bottom
+                hazard.body.setSize(hazard.width * 0.7, hazard.height * 0.7);
+            } else {
+                hazard = this.physics.add.sprite(hazardX, hazardY, "LightPost"); // Spawn Antenna at the bottom
+                hazard.body.setSize(hazard.width * 0.7, hazard.height * 0.7);
+            }
         }
+    
+        // Disable gravity for the hazard
+        hazard.body.allowGravity = false;
+    
+        // Set velocity for the hazard to move towards the left (adjust speed as needed)
+        hazard.setVelocity(-200, 0);
 
-        // Set leftward velocity for the hazard
-        hazard.setVelocity(-650, 0); // Adjust speed as needed
-
-        // Collider between hazard and bottom barrier (unchanged)
-        this.physics.add.collider(hazard, this.bottomBarrier, () => {
-            hazard.destroy(); // Remove hazard when it collides with bottom barrier
+        this.physics.add.collider(hazard, this.player, (hazard, player) => {
+            hazard.destroy();
+            player.setVelocityX(0); // Freeze player's X-axis movement
         });
 
         this.physics.add.collider(hazard, this.player, () => {
