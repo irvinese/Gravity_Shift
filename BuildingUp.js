@@ -72,6 +72,7 @@ class BuildingUp extends Phaser.Scene{
             callbackScope: this
         });
     }
+    
     update(){
         //code that moves background
         this.background.tilePositionY -= 1;
@@ -87,6 +88,7 @@ class BuildingUp extends Phaser.Scene{
             this.player.setVelocityX(400); // Downward velocity for quick descent
         }
        }
+
        spawnHazard() {
         // Randomly select hazard type
         const bottomHazardType = Phaser.Math.Between(0, 1); // Box or Antenna

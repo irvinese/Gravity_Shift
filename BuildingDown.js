@@ -54,21 +54,6 @@ class BuildingDown extends Phaser.Scene{
         //keyboard input
         this.cursors = this.input.keyboard.createCursorKeys();
 
-        window.onkeydown = e => {
-            if (e.keyCode === 32 && !this.isKeyDown){
-                this.gravity *= -1
-                this.player.setGravityY(this.gravity);
-                if (this.flip){
-                    this.flip = false;
-                } 
-                else {
-                    this.flip = true;
-                }
-                this.player.flipY = this.flip;
-                this.isKeyDown = true;
-            }
-        };
-
         //timer for 15 seconds to change scene
         this.time.delayedCall(15000, () => {
             this.scene.start("playGame");

@@ -36,10 +36,6 @@ class CityScene extends Phaser.Scene{
         this.physics.add.collider(this.player, this.bottomBarrier);
         this.physics.add.collider(this.player, this.topBarrier);
 
-        //Hazzards
-        this.box = this.add.sprite(config.width, config.height, "Box");
-        this.lightpost = this.add.sprite(config.width, 0, "LightPost");
-
 
         //keyboard input
         this.cursors = this.input.keyboard.createCursorKeys();
