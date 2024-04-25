@@ -190,7 +190,7 @@ moveHazards() {
         this.player.setVelocityX(velocityX);
     }
  //Reser hazard position
-    resethazardPos(hazard){
+    resetHazardPos(hazard){
         hazard.x = this.width;
         hazard.y = Phaser.Math.Between(0, this.height);
     }
@@ -202,7 +202,7 @@ moveHazards() {
     hazard(hazard, speed){
         hazard.body.velocity.x = speed;
         if (hazard.x <= 0) {
-            this.resethazardPos(hazard);
+            this.resetHazardPos(hazard);
         }
     }
     
