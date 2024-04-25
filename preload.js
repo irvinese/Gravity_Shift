@@ -1,20 +1,24 @@
 class preload extends Phaser.Scene{
     constructor(){
         super("preload")
+
     }
 
     preload(){
         const loadingText = this.add.text(
-            config.width / 2,
-            config.height / 2,
+            this.game.config.width / 2,
+            this.game.config.height / 2,
             "Loading...",
             {fontSize: "24px", fill: "#ffffff"}
         ).setOrigin(.5);
 
         this.load.image("StarCity", "assets/Backgrounds/GravityShift_CityBackground_Stars.png");
-        this.load.image("Box", "assets/Hazzards/CityHazzard_Box.png");
-        this.load.image("LightPsot", "assets/Hazzards/CityHazzard_LightPost.png");
-        this.load.spritesheet("Gravibot", "assets/Player/Gravibot_SpriteSheet.png", {
+        this.load.image("BuildingUp", "Assets/Backgrounds/GravityShift_BuildingUp_Stars.png");
+        this.load.image("BuildingRoof", "Assets/Backgrounds/GravityShift_BuildingRoof_Stars.png");
+        this.load.image("BuildingDown", "Assets/Backgrounds/GravityShift_BuildingDown.png");
+        this.load.image("Box", "Assets/Hazzards/CityHazzard_Box.png");
+        this.load.image("LightPost", "Assets/Hazzards/CityHazzard_LightPost.png");
+        this.load.spritesheet("Gravibot", "Assets/Player/Gravibot_SpriteSheet_RemoveBackground.png", {
             frameWidth: 100,
             frameHeight: 100
         });
