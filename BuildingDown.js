@@ -104,27 +104,44 @@ class BuildingDown extends Phaser.Scene{
         }
     }
     spawnHazard() {
-        //Randomly select hazard type
-        const hazardType = Phaser.Math.Between(0, 1);
-        
-        // Spawn hazard at random position along the bottom of the screen
-        const hazardX = Phaser.Math.Between(0, config.width);
-        const hazardY = config.height; // Spawn at the bottom of the screen
-
+        // Randomly select hazard type
+        const bottomHazardType = Phaser.Math.Between(0, 1); // Box or Antenna
+        const topHazardType = 0; // Drone
+    
+        // Spawn hazard off-screen to the right
+        const topHazardX = config.width - 150;
+        const bottomHazardX = config.width - 50; // Right edge of the scene
+        const topHazardY = 50; // Specific Y position at the top of the scene
+        const bottomHazardY = 0; // Specific Y position at the bottom of the scene
+    
+        let hazardY;
         let hazard;
-
-        if (hazardType === 0) {
-            hazard = this.physics.add.sprite(hazardX, hazardY, "Box");
+    
+        // Randomly select between top and bottom positions for hazard Y
+        if (Phaser.Math.Between(0, 1) === 0) {
+            hazardY = topHazardY;
+            hazard = this.physics.add.sprite(topHazardX, hazardY, "Drone"); // Spawn Drone at the top
         } else {
-            hazard = this.physics.add.sprite(hazardX, hazardY, "LightPost");
+            hazardY = bottomHazardY;
+            if (bottomHazardType === 0) {
+                hazard = this.physics.add.sprite(bottomHazardX, hazardY, "Evil"); // Spawn Box at the bottom
+                hazard.setRotation(-Math.PI / 2);
+                hazard.setFlipX(true);
+            } else {
+                hazard = this.physics.add.sprite(bottomHazardX, hazardY, "Suctioncup_Man"); // Spawn Antenna at the bottom
+                hazard.setScale(.25);
+            }
         }
-
-        // Set upward velocity for the hazard
-        hazard.setVelocity(20, -500); // Adjust speed as needed
-
-        // Collider between hazard and top barrier (unchanged)
-        this.physics.add.collider(hazard, this.topBarrier, () => {
-            hazard.destroy(); // Remove hazard when it collides with top barrier
+    
+        // Disable gravity for the hazard
+        hazard.body.allowGravity = false;
+    
+        // Set velocity for the hazard to move towards the left (adjust speed as needed)
+        hazard.setVelocity(0, -200);
+    
+        // Collider between hazard and bottom barrier (unchanged)
+        this.physics.add.collider(hazard, this.bottomBarrier, () => {
+            hazard.destroy(); // Remove hazard when it collides with bottom barrier
         });
     }
 }

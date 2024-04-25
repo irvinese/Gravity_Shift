@@ -54,8 +54,9 @@ class BuildingUp extends Phaser.Scene{
         this.physics.add.collider(this.player, this.rightBarrier);
  
         //Hazzards
-        this.box = this.physics.add.sprite(config.width, config.height, "Box");
-        this.lightpost = this.physics.add.sprite(config.width, 0, "LightPost");
+        this.drone = this.physics.add.sprite(config.width, config.height, "Drone");
+        this.evil = this.physics.add.sprite(config.width, config.height, "Evil");
+        this.Suction = this.physics.add.sprite(config.width, config.height, "Suctioncup_Man")
 
         //keyboard input
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -93,27 +94,46 @@ class BuildingUp extends Phaser.Scene{
        }
        spawnHazard() {
         // Randomly select hazard type
-        const hazardType = Phaser.Math.Between(0, 1);
-        
-        // Spawn hazard at random position along the top of the screen
-        const hazardX = Phaser.Math.Between(0, config.width);
-        const hazardY = 0; // Spawn at the top of the screen
-
+        const bottomHazardType = Phaser.Math.Between(0, 1); // Box or Antenna
+        const topHazardType = 0; // Drone
+    
+        // Spawn hazard off-screen to the right
+        const topHazardX = config.width - 150;
+        const bottomHazardX = config.width - 50; // Right edge of the scene
+        const topHazardY = 50; // Specific Y position at the top of the scene
+        const bottomHazardY = 0; // Specific Y position at the bottom of the scene
+    
+        let hazardY;
         let hazard;
-
-        if (hazardType === 0) {
-            hazard = this.physics.add.sprite(hazardX, hazardY, "Box");
+    
+        // Randomly select between top and bottom positions for hazard Y
+        if (Phaser.Math.Between(0, 1) === 0) {
+            hazardY = topHazardY;
+            hazard = this.physics.add.sprite(topHazardX, hazardY, "Drone"); // Spawn Drone at the top
         } else {
-            hazard = this.physics.add.sprite(hazardX, hazardY, "LightPost");
+            hazardY = bottomHazardY;
+            if (bottomHazardType === 0) {
+                hazard = this.physics.add.sprite(bottomHazardX, hazardY, "Evil"); // Spawn Box at the bottom
+                hazard.setRotation(-Math.PI / 2);
+                hazard.setFlipX(true);
+            } else {
+                hazard = this.physics.add.sprite(bottomHazardX, hazardY, "Suctioncup_Man"); // Spawn Antenna at the bottom
+                hazard.setScale(.25);
+            }
         }
-
-        // Set downward velocity for the hazard
-        hazard.setVelocity(-10, 500); // Adjust speed as needed
-
+    
+        // Disable gravity for the hazard
+        hazard.body.allowGravity = false;
+    
+        // Set velocity for the hazard to move towards the left (adjust speed as needed)
+        hazard.setVelocity(0, 200);
+    
         // Collider between hazard and bottom barrier (unchanged)
         this.physics.add.collider(hazard, this.bottomBarrier, () => {
             hazard.destroy(); // Remove hazard when it collides with bottom barrier
         });
     }
+    
+    
     
 }

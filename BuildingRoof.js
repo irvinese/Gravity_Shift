@@ -134,7 +134,7 @@ class BuildingRoof extends Phaser.Scene{
         });
     }
     
-    playerHitHazard(_player, hazard) {
+    playerHitHazard(player, hazard) {
         hazard.destroy();
     }
 }
