@@ -15,10 +15,13 @@ class CityScene extends Phaser.Scene {
     init(config){
         this.config = config;
     }
+        super("playGame");
+    }
 
     create() {
         const {width, height} = this.config;
         this.getUserLocation();
+        updateGameDimensions(1000, 200);
         //Background
         this.background = this.add.tileSprite(0, 0, width, height, "StarCity").setOrigin(0, 0);
         this.physics.world.setBounds(0, 0, width, height, true, true, true, true);
@@ -36,7 +39,7 @@ class CityScene extends Phaser.Scene {
 
         //Player
         this.player = this.physics.add.sprite(50, height - 50, "Gravibot");
-        this.player.setScale(.7);
+        this.player.setScale(.6);
         this.anims.create({
             key: "Gravibot_anim",
             frames: this.anims.generateFrameNumbers("Gravibot"),
@@ -120,8 +123,88 @@ moveHazards() {
     }
         this.hazzard(this.box, -150);
         this.hazzard(this.lightpost, -200);
+        this.box = this.physics.add.sprite(config.width, config.height, "Box");
+        this.lightpost = this.physics.add.sprite(config.width, 0, "LightPost");
+
+        //timer for 15 seconds to change scene
+        this.time.delayedCall(15000, () => {
+            this.scene.start("BuildingUp");
+        }, null, this)
+
+        // Hazard spawning timer
+        this.spawnHazardTimer = this.time.addEvent({
+            delay: 1900, // Adjust as needed
+            loop: true,
+            callback: this.spawnHazard,
+            callbackScope: this
+        });
+    }
+
+    update(){
+        //code that moves background
+        this.background.tilePositionX += 1;
 
         //Jump Action
+         if (this.cursors.up.isDown  && this.player.body.touching.down)
+        {
+            this.player.setVelocityY(-400);
+        }
+        // Quick Descent Action
+        if (this.cursors.down.isDown && !this.player.body.touching.down) 
+        {
+            this.player.setVelocityY(300);
+        }
+       }
+
+    spawnHazard() {
+        // Randomly select hazard type
+        const bottomHazardType = Phaser.Math.Between(0, 1); // Box or Antenna
+        const topHazardType = 0; // Drone
+    
+        // Spawn hazard off-screen to the right
+        const hazardX = config.width + 50; // Off the screen on the right side
+        const topHazardY = 50; // Specific Y position at the top of the scene
+        const bottomHazardY = config.height - 50; // Specific Y position at the bottom of the scene
+    
+        let hazardY;
+        let hazard;
+        
+        // Randomly select between top and bottom positions for hazard Y
+        if (Phaser.Math.Between(0, 1) === 0) {
+            hazardY = topHazardY;
+            hazard = this.physics.add.sprite(hazardX, hazardY, "Drone"); // Spawn Drone at the top
+            hazard.body.setSize(hazard.width * 0.7, hazard.height * 0.7);
+        } else {
+            hazardY = bottomHazardY;
+            if (bottomHazardType === 0) {
+                hazard = this.physics.add.sprite(hazardX, hazardY, "Box"); // Spawn Box at the bottom
+                hazard.body.setSize(hazard.width * 0.7, hazard.height * 0.7);
+            } else {
+                hazard = this.physics.add.sprite(hazardX, hazardY, "LightPost"); // Spawn Antenna at the bottom
+                hazard.body.setSize(hazard.width * 0.7, hazard.height * 0.7);
+            }
+        }
+    
+        // Disable gravity for the hazard
+        hazard.body.allowGravity = false;
+    
+        // Set velocity for the hazard to move towards the left (adjust speed as needed)
+        hazard.setVelocity(-200, 0);
+
+        this.physics.add.collider(hazard, this.player, (hazard, player) => {
+            hazard.destroy();
+            player.setVelocityX(0); // Freeze player's X-axis movement
+        });
+
+        this.physics.add.collider(hazard, this.player, () => {
+            this.gameOver(); // Game over when player collides with hazzard
+        });
+    }
+
+    gameOver() {
+        this.scene.start("GameOver");
+    }
+}
 
     if (this.cursors.up.isDown  && this.player.body.touching.down) {
         this.player.setVelocityY(-330);
