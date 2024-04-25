@@ -2,7 +2,7 @@ const PlayerData = require("./PlayerData.js");
 
 class CityScene extends Phaser.Scene {
     constructor(){
-        super({ key: "playGame" });
+        super("playGame");
         this.gravity = 100;
         this.flip = true;
         this.playerLongitude = null;
@@ -20,6 +20,10 @@ class CityScene extends Phaser.Scene {
         updateGameDimensions(1000, 200);
         const {width, height} = this.config;
         this.getUserLocation();
+    }
+
+    create() {
+        updateGameDimensions(1000, 200);
         //Background
         this.background = this.add.tileSprite(0, 0, width, height, "StarCity").setOrigin(0, 0);
         this.physics.world.setBounds(0, 0, width, height, true, true, true, true);
@@ -50,9 +54,77 @@ class CityScene extends Phaser.Scene {
         //Collision between player and barrier
         this.physics.add.collider(this.player,[ this.bottomBarrier, this.topBarrier]);
 
+        //Hazzards
+        this.box = this.physics.add.sprite(width, height, "Box");
+        this.lightpost = this.physics.add.sprite(width, 0, "LightPost");
 
         //keyboard input
         this.cursors = this.input.keyboard.createCursorKeys();
+        window.addEventListener("keydown", this.handleKeyDown.bind(this));
+        this.playerScore = this.playerData.loadScore();
+    }
+
+update(){
+        this.background.tilePositionX += 0.5;
+        if (this.playerLongitude !== null) {
+            this.moveHazards();
+    }
+}
+
+getUserLocation(){
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            position => {
+                const longitude = position.coords.longitude;
+                this.playerLongitude = longitude;
+                this.moveHazards();
+            }, 
+            error => {
+                console.error("Error getting user location: ", error);
+                this.playerLongitude = this.default_longitude;
+            }
+        );
+    } else {
+        console.error("Geolocation is not supported by this browser.");
+        this.playerLongitude = this.default_longitude;
+    }
+}
+
+handleKeyDown(event) {
+    if(event.keyCode === 32 && !this.isKeyDown) {
+        this.gravity *= -1;
+        this.player.setGravityY(this.gravity);
+        this.flip = !this.flip;
+        this.player.flipY = this.flip;
+        this.isKeyDown = true;
+    }
+}
+
+moveHazards() {
+    const hazardSpeeds = { box: -150, lightpost: -200 };
+
+    for (const hazard of [this.box, this.lightpost]) {
+        hazard.body.velocity.x = hazardSpeeds[hazard.name];
+        if (hazard.x <= 0) {
+            this.resetHazardPos(hazard);
+        }
+        console.log("update");
+    }
+    if (this.cursors.left.isDown) {
+        this.movePlayer(-150); // Move left
+    } else if (this.cursors.right.isDown) {
+        this.movePlayer(250); // Move right
+    }
+        // Check if player reaches the end
+    if (this.player.x >= this.config.width) {
+            // Stop the player movement
+        this.player.setVelocityX(0);
+
+            // Transition to the next scene
+        this.scene.start("BuildingUp");
+    }
+        this.hazzard(this.box, -150);
+        this.hazzard(this.lightpost, -200);
         this.box = this.physics.add.sprite(config.width, config.height, "Box");
         this.lightpost = this.physics.add.sprite(config.width, 0, "LightPost");
 
@@ -87,7 +159,7 @@ class CityScene extends Phaser.Scene {
         {
             this.player.setVelocityY(300);
         }
-       }
+    }
 
     spawnHazard() {
         // Randomly select hazard type
@@ -137,23 +209,42 @@ class CityScene extends Phaser.Scene {
     gameOver() {
         this.scene.start("GameOver");
     }
-
+    movePlayer(velocityX) {
+        this.player.setVelocityX(velocityX);
+    }
+ //Reser hazard position
+    resetHazzardPos(hazzard){
+        hazzard.x = this.width;
+        hazzard.y = Phaser.Math.Between(0, this.height);
+    }
+    savePlayerScore(score) {
+        this.playerScore = score;
+        this.playerData.saveScore(score);
+    }
+    //hazard movement
+    hazzard(hazzard, speed){
+        hazzard.body.velocity.x = speed;
+        if (hazzard.x <= 0) {
+            this.resetHazzardPos(hazzard);
+        }
+    }
+    
     getUserLocation(){
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                position => {
-                const longitude = position.coords.longitude;
-                this.playerLongitude = longitude;
-                this.moveHazards();
-            }, 
-            error => {
-                console.error("Error getting user location: ", error);
-                this.playerLongitude = this.default_longitude;
-            }
-        );
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            position => {
+            const longitude = position.coords.longitude;
+            this.playerLongitude = longitude;
+            this.moveHazards();
+        }, 
+        error => {
+            console.error("Error getting user location: ", error);
+            this.playerLongitude = this.default_longitude;
+        }
+    );
     } else {
-        console.error("Geolocation is not supported by this browser.");
-        this.playerLongitude = this.default_longitude;
-    }
-    }
+    console.error("Geolocation is not supported by this browser.");
+    this.playerLongitude = this.default_longitude;
+}
+}
 }
