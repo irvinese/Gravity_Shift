@@ -10,7 +10,7 @@
                 gravity: {
                     y: 100
                 },
-                debug: true
+                debug: false
             }
         }
     }

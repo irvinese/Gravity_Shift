@@ -21,13 +21,9 @@ class CityScene extends Phaser.Scene {
         //Barrier for bottom of background
         this.bottomBarrier = this.physics.add.staticSprite(config.width / 2, config.height, "bottomBarrier");
         this.bottomBarrier.setSize(config.width, 1); // Set the size to cover the entire width of the scene
-        this.bottomBarrier = this.physics.add.staticSprite(config.width / 2, config.height, "bottomBarrier");
-        this.bottomBarrier.setSize(config.width, 1); // Set the size to cover the entire width of the scene
         this.bottomBarrier.setVisible(false);
 
         //barrier for the top of the screen
-        this.topBarrier = this.physics.add.staticSprite(config.width / 2, 0, "topBarrier");
-        this.topBarrier.setSize(config.width, 1); // Set the size to cover the entire width of the scene
         this.topBarrier = this.physics.add.staticSprite(config.width / 2, 0, "topBarrier");
         this.topBarrier.setSize(config.width, 1); // Set the size to cover the entire width of the scene
         this.topBarrier.setVisible(false);
@@ -91,7 +87,6 @@ getUserLocation(){
             position => {
                 const longitude = position.coords.longitude;
                 this.playerLongitude = longitude;
-                this.moveHazards();
             }, 
             error => {
                 console.error("Error getting user location: ", error);
@@ -109,9 +104,9 @@ getUserLocation(){
         const topHazardType = 0; // Drone
     
         // Spawn hazard off-screen to the right
-        const hazardX = this.config.width + 50; // Off the screen on the right side
+        const hazardX = config.width + 50; // Off the screen on the right side
         const topHazardY = 50; // Specific Y position at the top of the scene
-        const bottomHazardY = this.config.height - 50; // Specific Y position at the bottom of the scene
+        const bottomHazardY = config.height - 50; // Specific Y position at the bottom of the scene
     
         let hazardY;
         let hazard;
