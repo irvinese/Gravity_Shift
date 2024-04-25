@@ -18,24 +18,18 @@ class CityScene extends Phaser.Scene {
 
     create() {
         updateGameDimensions(1000, 200);
-        const {width, height} = this.config;
-        this.getUserLocation();
-    }
-
-    create() {
-        updateGameDimensions(1000, 200);
         //Background
-        this.background = this.add.tileSprite(0, 0, width, height, "StarCity").setOrigin(0, 0);
-        this.physics.world.setBounds(0, 0, width, height, true, true, true, true);
+        this.background = this.add.tileSprite(0, 0, config.width, config.height, "StarCity").setOrigin(0, 0);
+        this.physics.world.setBounds(0, 0, config.width, config.height, true, true, true, true);
 
         //Barrier for bottom of background
-        this.bottomBarrier = this.physics.add.staticSprite(width / 2, height, "bottomBarrier");
-        this.bottomBarrier.setSize(width, 1); // Set the size to cover the entire width of the scene
+        this.bottomBarrier = this.physics.add.staticSprite(config.width / 2, config.height, "bottomBarrier");
+        this.bottomBarrier.setSize(config.width, 1); // Set the size to cover the entire width of the scene
         this.bottomBarrier.setVisible(false);
 
         //barrier for the top of the screen
-        this.topBarrier = this.physics.add.staticSprite(width / 2, 0, "topBarrier");
-        this.topBarrier.setSize(width, 1); // Set the size to cover the entire width of the scene
+        this.topBarrier = this.physics.add.staticSprite(config.width / 2, 0, "topBarrier");
+        this.topBarrier.setSize(config.width, 1); // Set the size to cover the entire width of the scene
         this.topBarrier.setVisible(false);
         
 
@@ -54,9 +48,9 @@ class CityScene extends Phaser.Scene {
         //Collision between player and barrier
         this.physics.add.collider(this.player,[ this.bottomBarrier, this.topBarrier]);
 
-        //Hazzards
-        this.box = this.physics.add.sprite(width, height, "Box");
-        this.lightpost = this.physics.add.sprite(width, 0, "LightPost");
+        //hazards
+        this.box = this.physics.add.sprite(config.width, config.height, "Box");
+        this.lightpost = this.physics.add.sprite(config.width, 0, "LightPost");
 
         //keyboard input
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -123,8 +117,8 @@ moveHazards() {
             // Transition to the next scene
         this.scene.start("BuildingUp");
     }
-        this.hazzard(this.box, -150);
-        this.hazzard(this.lightpost, -200);
+        this.hazard(this.box, -150);
+        this.hazard(this.lightpost, -200);
         this.box = this.physics.add.sprite(config.width, config.height, "Box");
         this.lightpost = this.physics.add.sprite(config.width, 0, "LightPost");
 
@@ -144,23 +138,6 @@ moveHazards() {
         window.addEventListener("keydown", this.handleKeyDown.bind(this));
     this.playerScore = this.playerData.loadScore();
     }
-
-    update(){
-        //code that moves background
-        this.background.tilePositionX += 1;
-
-        //Jump Action
-         if (this.cursors.up.isDown  && this.player.body.touching.down)
-        {
-            this.player.setVelocityY(-400);
-        }
-        // Quick Descent Action
-        if (this.cursors.down.isDown && !this.player.body.touching.down) 
-        {
-            this.player.setVelocityY(300);
-        }
-    }
-
     spawnHazard() {
         // Randomly select hazard type
         const bottomHazardType = Phaser.Math.Between(0, 1); // Box or Antenna
@@ -202,7 +179,7 @@ moveHazards() {
         });
 
         this.physics.add.collider(hazard, this.player, () => {
-            this.gameOver(); // Game over when player collides with hazzard
+            this.gameOver(); // Game over when player collides with hazard
         });
     }
 
@@ -213,19 +190,19 @@ moveHazards() {
         this.player.setVelocityX(velocityX);
     }
  //Reser hazard position
-    resetHazzardPos(hazzard){
-        hazzard.x = this.width;
-        hazzard.y = Phaser.Math.Between(0, this.height);
+    resethazardPos(hazard){
+        hazard.x = this.width;
+        hazard.y = Phaser.Math.Between(0, this.height);
     }
     savePlayerScore(score) {
         this.playerScore = score;
         this.playerData.saveScore(score);
     }
     //hazard movement
-    hazzard(hazzard, speed){
-        hazzard.body.velocity.x = speed;
-        if (hazzard.x <= 0) {
-            this.resetHazzardPos(hazzard);
+    hazard(hazard, speed){
+        hazard.body.velocity.x = speed;
+        if (hazard.x <= 0) {
+            this.resethazardPos(hazard);
         }
     }
     
