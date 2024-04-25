@@ -50,11 +50,6 @@ class BuildingDown extends Phaser.Scene{
         this.physics.add.collider(this.player, this.topBarrier);
         this.physics.add.collider(this.player, this.leftBarrier);
         this.physics.add.collider(this.player, this.rightBarrier);
- 
-        //Hazzards
-        this.drone = this.physics.add.sprite(config.width, config.height, "Drone");
-        this.evil = this.physics.add.sprite(config.width, config.height, "Evil");
-        this.Suction = this.physics.add.sprite(config.width, config.height, "Suctioncup_Man")
 
         //keyboard input
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -125,14 +120,17 @@ class BuildingDown extends Phaser.Scene{
                 hazard = this.physics.add.sprite(topHazardX, hazardY, "Evil"); // Spawn Evil at the top
                 hazard.setRotation(Math.PI / 2);
                 hazard.setFlipX(true);
+                hazard.body.setSize(hazard.width * 0.7, hazard.height * 0.7);
             } else {
                 hazard = this.physics.add.sprite(topHazardX, hazardY, "Suctioncup_Man"); // Spawn Suctioncup_Man at the top
                 hazard.setScale(.25);
                 hazard.setFlipX(true);
+                hazard.body.setSize(hazard.width * 0.7, hazard.height * 0.7);
             }
         } else {
             hazardY = bottomHazardY;
             hazard = this.physics.add.sprite(bottomHazardX, hazardY, "Drone"); // Spawn Drone at the bottom
+            hazard.body.setSize(hazard.width * 0.7, hazard.height * 0.7);
         }
     
         // Disable gravity for the hazard
@@ -144,6 +142,11 @@ class BuildingDown extends Phaser.Scene{
         // Collider between hazard and top barrier
         this.physics.add.collider(hazard, this.topBarrier, () => {
             hazard.destroy(); // Remove hazard when it collides with top barrier
+        });
+
+        this.physics.add.collider(hazard, this.player, (hazard, player) => {
+            hazard.destroy();
+            player.setVelocityX(0); // Freeze player's X-axis movement
         });
     }
     

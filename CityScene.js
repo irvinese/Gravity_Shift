@@ -39,10 +39,6 @@ class CityScene extends Phaser.Scene{
         this.physics.add.collider(this.player, this.bottomBarrier);
         this.physics.add.collider(this.player, this.topBarrier);
 
-        //Hazzards
-        this.box = this.add.sprite(config.width, config.height, "Box");
-        this.lightpost = this.add.sprite(config.width, 0, "LightPost");
-
 
         //keyboard input
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -109,12 +105,15 @@ class CityScene extends Phaser.Scene{
         if (Phaser.Math.Between(0, 1) === 0) {
             hazardY = topHazardY;
             hazard = this.physics.add.sprite(hazardX, hazardY, "Drone"); // Spawn Drone at the top
+            hazard.body.setSize(hazard.width * 0.7, hazard.height * 0.7);
         } else {
             hazardY = bottomHazardY;
             if (bottomHazardType === 0) {
                 hazard = this.physics.add.sprite(hazardX, hazardY, "Box"); // Spawn Box at the bottom
+                hazard.body.setSize(hazard.width * 0.7, hazard.height * 0.7);
             } else {
                 hazard = this.physics.add.sprite(hazardX, hazardY, "LightPost"); // Spawn Antenna at the bottom
+                hazard.body.setSize(hazard.width * 0.7, hazard.height * 0.7);
             }
         }
     
@@ -123,10 +122,11 @@ class CityScene extends Phaser.Scene{
     
         // Set velocity for the hazard to move towards the left (adjust speed as needed)
         hazard.setVelocity(-200, 0);
-    
-        // Collider between hazard and bottom barrier (unchanged)
-        this.physics.add.collider(hazard, this.bottomBarrier, () => {
-            hazard.destroy(); // Remove hazard when it collides with bottom barrier
+
+        this.physics.add.collider(hazard, this.player, (hazard, player) => {
+            hazard.destroy();
+            player.setVelocityX(0); // Freeze player's X-axis movement
         });
+        
     }
 }

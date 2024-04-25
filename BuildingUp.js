@@ -52,11 +52,6 @@ class BuildingUp extends Phaser.Scene{
         this.physics.add.collider(this.player, this.topBarrier);
         this.physics.add.collider(this.player, this.leftBarrier);
         this.physics.add.collider(this.player, this.rightBarrier);
- 
-        //Hazzards
-        this.drone = this.physics.add.sprite(config.width, config.height, "Drone");
-        this.evil = this.physics.add.sprite(config.width, config.height, "Evil");
-        this.Suction = this.physics.add.sprite(config.width, config.height, "Suctioncup_Man")
 
         //keyboard input
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -110,15 +105,18 @@ class BuildingUp extends Phaser.Scene{
         if (Phaser.Math.Between(0, 1) === 0) {
             hazardY = topHazardY;
             hazard = this.physics.add.sprite(topHazardX, hazardY, "Drone"); // Spawn Drone at the top
+            hazard.body.setSize(hazard.width * 0.7, hazard.height * 0.7);
         } else {
             hazardY = bottomHazardY;
             if (bottomHazardType === 0) {
                 hazard = this.physics.add.sprite(bottomHazardX, hazardY, "Evil"); // Spawn Box at the bottom
                 hazard.setRotation(-Math.PI / 2);
                 hazard.setFlipX(true);
+                hazard.body.setSize(hazard.width * 0.7, hazard.height * 0.7);
             } else {
                 hazard = this.physics.add.sprite(bottomHazardX, hazardY, "Suctioncup_Man"); // Spawn Antenna at the bottom
                 hazard.setScale(.25);
+                hazard.body.setSize(hazard.width * 0.7, hazard.height * 0.7);
             }
         }
     
@@ -127,10 +125,10 @@ class BuildingUp extends Phaser.Scene{
     
         // Set velocity for the hazard to move towards the left (adjust speed as needed)
         hazard.setVelocity(0, 200);
-    
-        // Collider between hazard and bottom barrier (unchanged)
-        this.physics.add.collider(hazard, this.bottomBarrier, () => {
-            hazard.destroy(); // Remove hazard when it collides with bottom barrier
+
+        this.physics.add.collider(hazard, this.player, (hazard, player) => {
+            hazard.destroy();
+            player.setVelocityX(0); // Freeze player's X-axis movement
         });
     }
     
