@@ -1,25 +1,12 @@
-const PlayerData = require("./PlayerData.js");
-
 class CityScene extends Phaser.Scene {
     constructor(){
-        super({ key: "playGame" });
-        this.gravity = 100;
-        this.flip = true;
-        this.playerLongitude = null;
-        this.isKeyDown = false;
-        this.default_longitude = 0;
-        this.playerData = new PlayerData(); 
-        this.playerScore = this.playerData.loadScore();
-    }
-
-    init(config){
-        this.config = config;
-    }
         super("playGame");
     }
+    
+    gravity = 100
+    flip = true
 
     create() {
-        const {width, height} = this.config;
         this.getUserLocation();
         updateGameDimensions(1000, 200);
         //Background
@@ -204,12 +191,8 @@ moveHazards() {
     gameOver() {
         this.scene.start("GameOver");
     }
-}
 
-    if (this.cursors.up.isDown  && this.player.body.touching.down) {
-        this.player.setVelocityY(-330);
-    }
-}
+
     movePlayer(velocityX) {
         this.player.setVelocityX(velocityX);
     }
@@ -219,7 +202,7 @@ moveHazards() {
         hazzard.y = Phaser.Math.Between(0, this.height);
     }
 
-    }
+    
     savePlayerScore(score) {
         this.playerScore = score;
         this.playerData.saveScore(score);
@@ -232,3 +215,4 @@ moveHazards() {
         }
     }
 
+}
