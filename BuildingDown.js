@@ -130,7 +130,7 @@ class BuildingDown extends Phaser.Scene{
         });
 
         this.physics.add.collider(hazard, this.player, () => {
-            this.gameOver(); // Game over when player collides with hazzard
+            this.gameOver(); // Game over when player collides with hazard
         });
     }
 
