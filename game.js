@@ -14,7 +14,6 @@
             }
         }
     }
-
     var game = new Phaser.Game(config);
 
     // Function to update game dimensions

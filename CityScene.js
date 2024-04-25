@@ -1,22 +1,37 @@
-class CityScene extends Phaser.Scene{
+const PlayerData = require("./PlayerData.js");
+
+class CityScene extends Phaser.Scene {
     constructor(){
-        super("playGame");
+        super({ key: "playGame" });
+        this.gravity = 100;
+        this.flip = true;
+        this.playerLongitude = null;
+        this.isKeyDown = false;
+        this.default_longitude = 0;
+        this.playerData = new PlayerData(); 
+        this.playerScore = this.playerData.loadScore();
+    }
+
+    init(config){
+        this.config = config;
     }
 
     create() {
         updateGameDimensions(1000, 200);
+        const {width, height} = this.config;
+        this.getUserLocation();
         //Background
-        this.background = this.add.tileSprite(0, 0, config.width, config.height, "StarCity").setOrigin(0, 0);
-        this.physics.world.setBounds(0, 0, config.width, config.height, true, true, true, true);
+        this.background = this.add.tileSprite(0, 0, width, height, "StarCity").setOrigin(0, 0);
+        this.physics.world.setBounds(0, 0, width, height, true, true, true, true);
 
         //Barrier for bottom of background
-        this.bottomBarrier = this.physics.add.staticSprite(config.width / 2, config.height, "bottomBarrier");
-        this.bottomBarrier.setSize(config.width, 1); // Set the size to cover the entire width of the scene
+        this.bottomBarrier = this.physics.add.staticSprite(width / 2, height, "bottomBarrier");
+        this.bottomBarrier.setSize(width, 1); // Set the size to cover the entire width of the scene
         this.bottomBarrier.setVisible(false);
 
         //barrier for the top of the screen
-        this.topBarrier = this.physics.add.staticSprite(config.width / 2, 0, "topBarrier");
-        this.topBarrier.setSize(config.width, 1); // Set the size to cover the entire width of the scene
+        this.topBarrier = this.physics.add.staticSprite(width / 2, 0, "topBarrier");
+        this.topBarrier.setSize(width, 1); // Set the size to cover the entire width of the scene
         this.topBarrier.setVisible(false);
         
 
@@ -33,8 +48,7 @@ class CityScene extends Phaser.Scene{
         this.player.play("Gravibot_anim");
 
         //Collision between player and barrier
-        this.physics.add.collider(this.player, this.bottomBarrier);
-        this.physics.add.collider(this.player, this.topBarrier);
+        this.physics.add.collider(this.player,[ this.bottomBarrier, this.topBarrier]);
 
 
         //keyboard input
@@ -54,6 +68,9 @@ class CityScene extends Phaser.Scene{
             callback: this.spawnHazard,
             callbackScope: this
         });
+
+        window.addEventListener("keydown", this.handleKeyDown.bind(this));
+    this.playerScore = this.playerData.loadScore();
     }
 
     update(){
@@ -119,5 +136,24 @@ class CityScene extends Phaser.Scene{
 
     gameOver() {
         this.scene.start("GameOver");
+    }
+
+    getUserLocation(){
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                position => {
+                const longitude = position.coords.longitude;
+                this.playerLongitude = longitude;
+                this.moveHazards();
+            }, 
+            error => {
+                console.error("Error getting user location: ", error);
+                this.playerLongitude = this.default_longitude;
+            }
+        );
+    } else {
+        console.error("Geolocation is not supported by this browser.");
+        this.playerLongitude = this.default_longitude;
+    }
     }
 }
