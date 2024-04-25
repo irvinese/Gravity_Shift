@@ -15,8 +15,6 @@ class CityScene extends Phaser.Scene {
         //Background
         this.background = this.add.tileSprite(0, 0, config.width, config.height, "StarCity").setOrigin(0, 0);
         this.physics.world.setBounds(0, 0, config.width, config.height, true, true, true, true);
-        this.background = this.add.tileSprite(0, 0, config.width, config.height, "StarCity").setOrigin(0, 0);
-        this.physics.world.setBounds(0, 0, config.width, config.height, true, true, true, true);
 
         //Barrier for bottom of background
         this.bottomBarrier = this.physics.add.staticSprite(config.width / 2, config.height, "bottomBarrier");
@@ -29,12 +27,11 @@ class CityScene extends Phaser.Scene {
         this.topBarrier.setVisible(false);
 
         // Left barrier
-     this.leftBarrier = this.physics.add.staticSprite(0, config.height / 2, "leftBarrier");
-     this.leftBarrier.setSize(1, config.height); // Set the size to cover the entire height of the scene
-     this.leftBarrier.setVisible(false);
+        this.leftBarrier = this.physics.add.staticSprite(0, config.height / 2, "leftBarrier");
+        this.leftBarrier.setSize(1, config.height); // Set the size to cover the entire height of the scene
+        this.leftBarrier.setVisible(false);
 
         //Player
-        this.player = this.physics.add.sprite(50, config.height - 50, "Gravibot");
         this.player = this.physics.add.sprite(50, config.height - 50, "Gravibot");
         this.player.setScale(.6);
         this.anims.create({
@@ -53,33 +50,34 @@ class CityScene extends Phaser.Scene {
         //keyboard input
         this.cursors = this.input.keyboard.createCursorKeys();
 
-         //timer for 15 seconds to change scene
-         this.time.delayedCall(15000, () => {
+        //timer for 15 seconds to change scene
+        this.time.delayedCall(15000, () => {
             this.scene.start("BuildingDown");
-        }, null, this)
+        }, null, this);
+
         // Hazard spawning timer
         this.spawnHazardTimer = this.time.addEvent({
-            delay: 1250, // Adjust as needed
+            delay: 1550, // Adjust as needed
             loop: true,
             callback: this.spawnHazard,
             callbackScope: this
         });
     }
 
-    update(){
+    update() {
         //code that moves background
         this.background.tilePositionX += 1;
 
         //Jump Action
-         if (this.cursors.up.isDown  && this.player.body.touching.down)
-        {
+        if (this.cursors.up.isDown && this.player.body.touching.down) {
             this.player.setVelocityY(-400);
         }
+
         // Quick Descent Action
-       if (this.cursors.down.isDown && !this.player.body.touching.down) {
-           this.player.setVelocityY(300);
-       }
-   }
+        if (this.cursors.down.isDown && !this.player.body.touching.down) {
+            this.player.setVelocityY(300);
+        }
+    }
 
 getUserLocation(){
     if (navigator.geolocation) {
@@ -102,7 +100,7 @@ getUserLocation(){
         // Randomly select hazard type
         const bottomHazardType = Phaser.Math.Between(0, 1); // Box or Antenna
         const topHazardType = 0; // Drone
-    
+
         // Spawn hazard off-screen to the right
         const hazardX = config.width + 50; // Off the screen on the right side
         const topHazardY = 50; // Specific Y position at the top of the scene
@@ -110,7 +108,7 @@ getUserLocation(){
     
         let hazardY;
         let hazard;
-    
+
         // Randomly select between top and bottom positions for hazard Y
         if (Phaser.Math.Between(0, 1) === 0) {
             hazardY = topHazardY;
@@ -126,43 +124,39 @@ getUserLocation(){
                 hazard.body.setSize(hazard.width * 0.7, hazard.height * 0.7);
             }
         }
-    
+
         // Disable gravity for the hazard
         hazard.body.allowGravity = false;
-    
+
         // Set velocity for the hazard to move towards the left (adjust speed as needed)
         hazard.setVelocity(-200, 0);
-    
+
         // Collider with player
         this.physics.add.collider(hazard, this.player, () => {
-            this.gameOver(); // Game over when player collides with hazzard
+            this.gameOver(); // Game over when player collides with hazard
         });
     }
-    
+
     gameOver() {
         this.scene.start("GameOver");
     }
 
-
-  
- //Reser hazard position
-    resetHazzardPos(hazzard){
-        hazzard.x = this.width;
-        hazzard.y = Phaser.Math.Between(0, this.height);
+    //Reset hazard position
+    resetHazardPos(hazard) {
+        hazard.x = config.width;
+        hazard.y = Phaser.Math.Between(0, config.height);
     }
 
-    
     savePlayerScore(score) {
         this.playerScore = score;
         this.playerData.saveScore(score);
     }
+
     //hazard movement
-    hazzard(hazzard, speed){
-        hazzard.body.velocity.x = speed;
-        if (hazzard.x <= 0) {
-            this.resetHazzardPos(hazzard);
+    hazzard(hazard, speed) {
+        hazard.body.velocity.x = speed;
+        if (hazard.x <= 0) {
+            this.resetHazardPos(hazard);
         }
     }
-    
-
 }
