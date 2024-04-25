@@ -132,9 +132,17 @@ class BuildingRoof extends Phaser.Scene{
         this.physics.add.collider(hazard, this.bottomBarrier, () => {
             hazard.destroy(); // Remove hazard when it collides with bottom barrier
         });
+
+        this.physics.add.collider(hazard, this.player, () => {
+            this.gameOver(); // Game over when player collides with hazzard
+        });
     }
     
     playerHitHazard(player, hazard) {
         hazard.destroy();
+    }
+
+    gameOver() {
+        this.scene.start("GameOver");
     }
 }

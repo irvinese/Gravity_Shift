@@ -11,7 +11,8 @@ class preload extends Phaser.Scene{
             "Loading...",
             {fontSize: "24px", fill: "#ffffff"}
         ).setOrigin(.5);
-
+        
+        this.load.image("PlayAgainButton", "assets/GameOver/playagain.png");
         this.load.image("StarCity", "assets/Backgrounds/GravityShift_CityBackground_Stars.png");
         this.load.image("BuildingUp", "Assets/Backgrounds/GravityShift_BuildingUp_Stars.png");
         this.load.image("BuildingRoof", "Assets/Backgrounds/GravityShift_BuildingRoof_Stars.png");
@@ -34,7 +35,7 @@ class preload extends Phaser.Scene{
 
         this.load.on("complete", () => {
             // Load next scene
-            this.scene.start("BuildingUp");
+            this.scene.start("playGame");
         });
 
         this.load.on("fileloaderror", (key, file) => {

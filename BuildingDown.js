@@ -50,10 +50,6 @@ class BuildingDown extends Phaser.Scene{
         this.physics.add.collider(this.player, this.topBarrier);
         this.physics.add.collider(this.player, this.leftBarrier);
         this.physics.add.collider(this.player, this.rightBarrier);
- 
-        //Hazzards
-        this.box = this.physics.add.sprite(config.width, config.height, "Box");
-        this.lightpost = this.physics.add.sprite(config.width, 0, "LightPost");
 
         //keyboard input
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -143,5 +139,13 @@ class BuildingDown extends Phaser.Scene{
         this.physics.add.collider(hazard, this.bottomBarrier, () => {
             hazard.destroy(); // Remove hazard when it collides with bottom barrier
         });
+
+        this.physics.add.collider(hazard, this.player, () => {
+            this.gameOver(); // Game over when player collides with hazzard
+        });
+    }
+
+    gameOver() {
+        this.scene.start("GameOver");
     }
 }

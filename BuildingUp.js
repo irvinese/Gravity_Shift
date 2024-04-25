@@ -52,11 +52,6 @@ class BuildingUp extends Phaser.Scene{
         this.physics.add.collider(this.player, this.topBarrier);
         this.physics.add.collider(this.player, this.leftBarrier);
         this.physics.add.collider(this.player, this.rightBarrier);
- 
-        //Hazzards
-        this.drone = this.physics.add.sprite(config.width, config.height, "Drone");
-        this.evil = this.physics.add.sprite(config.width, config.height, "Evil");
-        this.Suction = this.physics.add.sprite(config.width, config.height, "Suctioncup_Man")
 
         //keyboard input
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -132,8 +127,14 @@ class BuildingUp extends Phaser.Scene{
         this.physics.add.collider(hazard, this.bottomBarrier, () => {
             hazard.destroy(); // Remove hazard when it collides with bottom barrier
         });
+
+        this.physics.add.collider(hazard, this.player, () => {
+            this.gameOver(); // Game over when player collides with hazzard
+        });
     }
     
-    
+    gameOver() {
+        this.scene.start("GameOver");
+    }
     
 }
