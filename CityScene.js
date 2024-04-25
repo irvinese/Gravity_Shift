@@ -2,7 +2,7 @@ const PlayerData = require("./PlayerData.js");
 
 class CityScene extends Phaser.Scene {
     constructor(){
-        super({ key: "playGame" });
+        super("playGame");
         this.gravity = 100;
         this.flip = true;
         this.playerLongitude = null;
@@ -15,12 +15,14 @@ class CityScene extends Phaser.Scene {
     init(config){
         this.config = config;
     }
-        super("playGame");
+
+    create() {
+        updateGameDimensions(1000, 200);
+        const {width, height} = this.config;
+        this.getUserLocation();
     }
 
     create() {
-        const {width, height} = this.config;
-        this.getUserLocation();
         updateGameDimensions(1000, 200);
         //Background
         this.background = this.add.tileSprite(0, 0, width, height, "StarCity").setOrigin(0, 0);
@@ -38,7 +40,7 @@ class CityScene extends Phaser.Scene {
         
 
         //Player
-        this.player = this.physics.add.sprite(50, height - 50, "Gravibot");
+        this.player = this.physics.add.sprite(50, config.height - 50, "Gravibot");
         this.player.setScale(.6);
         this.anims.create({
             key: "Gravibot_anim",
@@ -62,7 +64,7 @@ class CityScene extends Phaser.Scene {
         this.playerScore = this.playerData.loadScore();
     }
 
-    update(){
+update(){
         this.background.tilePositionX += 0.5;
         if (this.playerLongitude !== null) {
             this.moveHazards();
@@ -138,6 +140,9 @@ moveHazards() {
             callback: this.spawnHazard,
             callbackScope: this
         });
+
+        window.addEventListener("keydown", this.handleKeyDown.bind(this));
+    this.playerScore = this.playerData.loadScore();
     }
 
     update(){
@@ -154,7 +159,7 @@ moveHazards() {
         {
             this.player.setVelocityY(300);
         }
-       }
+    }
 
     spawnHazard() {
         // Randomly select hazard type
@@ -204,12 +209,6 @@ moveHazards() {
     gameOver() {
         this.scene.start("GameOver");
     }
-}
-
-    if (this.cursors.up.isDown  && this.player.body.touching.down) {
-        this.player.setVelocityY(-330);
-    }
-}
     movePlayer(velocityX) {
         this.player.setVelocityX(velocityX);
     }
@@ -217,8 +216,6 @@ moveHazards() {
     resetHazzardPos(hazzard){
         hazzard.x = this.width;
         hazzard.y = Phaser.Math.Between(0, this.height);
-    }
-
     }
     savePlayerScore(score) {
         this.playerScore = score;
@@ -231,4 +228,23 @@ moveHazards() {
             this.resetHazzardPos(hazzard);
         }
     }
-
+    
+    getUserLocation(){
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            position => {
+            const longitude = position.coords.longitude;
+            this.playerLongitude = longitude;
+            this.moveHazards();
+        }, 
+        error => {
+            console.error("Error getting user location: ", error);
+            this.playerLongitude = this.default_longitude;
+        }
+    );
+    } else {
+    console.error("Geolocation is not supported by this browser.");
+    this.playerLongitude = this.default_longitude;
+}
+}
+}
