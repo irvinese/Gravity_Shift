@@ -72,7 +72,7 @@ class BuildingUp extends Phaser.Scene{
             callbackScope: this
         });
     }
-    
+
     update(){
         //code that moves background
         this.background.tilePositionY -= 1;
@@ -127,11 +127,6 @@ class BuildingUp extends Phaser.Scene{
     
         // Set velocity for the hazard to move towards the left (adjust speed as needed)
         hazard.setVelocity(0, 200);
-
-        this.physics.add.collider(hazard, this.player, (hazard, player) => {
-            hazard.destroy();
-            player.setVelocityX(0); // Freeze player's X-axis movement
-        });
 
         this.physics.add.collider(hazard, this.player, () => {
             this.gameOver(); // Game over when player collides with hazzard
